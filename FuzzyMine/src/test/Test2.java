@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,7 @@ public class Test2 {
 			UnaryMetric nodeSignificanceMetric = mr.getAggregateUnaryMetric();
 			int size = XLogInfoFactory.createLogInfo(log).getEventClasses().size();
 			
+			System.out.println("----------------------------");
 			Pretreatment pretreatment = new Pretreatment(edgeSignificance, edgeCorrelation, nodeSignificanceMetric,size);
 			pretreatment.cut(0.5, 0.2);
 			pretreatment.filterEdge(0.2, 0.3);
@@ -95,7 +97,13 @@ public class Test2 {
 			
 			
 			Set<FMEdgeImpl> edgeImpls = mfg.getEdgeImpls();
-			double nodeCutoff =0.4;
+			for (FMEdgeImpl fmEdgeImpl : edgeImpls) {
+				System.out.println("Source: " +fmEdgeImpl.getSource().getElementName()
+						+" target: "+fmEdgeImpl.getTarget().getElementName() 
+						+ " Significance: "+fmEdgeImpl.getSignificance()
+						+ " Correlation: "+fmEdgeImpl.getCorrelation());
+			}
+			double nodeCutoff =1;
 			Set<FMNode> nodes = mfg.getNodes();
 			for (FMNode fmNode : nodes) {
 				if(fmNode.getSignificance() < nodeCutoff){
@@ -121,10 +129,14 @@ public class Test2 {
 								((FMClusterNode) target).add(fmNode);
 								mfg.removeNode(fmNode);
 								mfg.addClusterNode((FMClusterNode) target);
+								System.out.println("1: "+target.getElementName()+" is cluster added"+fmNode.getElementName());
 							}else{
 								FMClusterNode clusterNode = new FMClusterNode(mfg, mfg.getClusterNodes().size(), "Cluster");
+								clusterNode.setIndex(fmNode.getIndex());
+								clusterNode.setElementName(fmNode.getElementName());
 								mfg.addClusterNode(clusterNode);
 								mfg.removeNode(fmNode);
+								System.out.println("1: "+fmNode.getElementName()+" is not cluster, become a cluster");
 							}
 							
 							
@@ -134,16 +146,33 @@ public class Test2 {
 								((FMClusterNode) source).add(fmNode);
 								mfg.removeNode(fmNode);
 								mfg.addClusterNode((FMClusterNode) source);
+								System.out.println("2: "+source.getElementName()+" is cluster added"+fmNode.getElementName());
 							}else{
 								FMClusterNode clusterNode = new FMClusterNode(mfg, mfg.getClusterNodes().size(), "Cluster");
+								clusterNode.setIndex(fmNode.getIndex());
+								clusterNode.setElementName(fmNode.getElementName());
 								clusterNode.add(fmNode);
 								mfg.removeNode(fmNode);
+								System.out.println("2: "+fmNode.getElementName()+" is not cluster ,become a cluster");
 							}
 						}
 					}
 					
 				}
 			}
+			System.out.println("fisrt step");
+			set = mfg.getNodes();
+			for (FMNode fmNode : set) {
+				System.out.println("index: "+fmNode.getIndex() +" name:"+fmNode.getElementName());
+				
+			}
+			List<FMClusterNode> nodes2 = mfg.getClusterNodes();
+			System.out.println(nodes2.size());
+			for (FMClusterNode fmClusterNode : nodes2) {
+				Set<FMNode> primitives = fmClusterNode.getPrimitives();
+				System.out.println("index: "+fmClusterNode.getIndex() +" name:"+fmClusterNode.getElementName()+" inner node:"+primitives.size());
+			}
+			
 			
 			List<FMClusterNode> clusterNodes = mfg.getClusterNodes();
 			for (FMClusterNode fmClusterNode : clusterNodes) {
@@ -192,10 +221,13 @@ public class Test2 {
 					}
 					
 				}
-				mfg.removeClusterNode(target);
-				target.add(fmClusterNode);
-				mfg.removeClusterNode(fmClusterNode);
-				mfg.addClusterNode(target);
+				if(target != null){
+					mfg.removeClusterNode(target);
+					target.add(fmClusterNode);
+					mfg.removeClusterNode(fmClusterNode);
+					mfg.addClusterNode(target);
+				}
+				
 				
 			}
 			
@@ -204,6 +236,7 @@ public class Test2 {
 			for(int i = 0; i < size; i++ ){
 				System.out.print(nodeSignificanceMetric.getMeasure(i)+" ");
 			}
+			System.out.println();
 			// List<BinaryLogMetric> metrics = mr.getBinaryLogMetrics();
 			// for(BinaryLogMetric metric : metrics){
 			// int size =
@@ -259,11 +292,7 @@ public class Test2 {
 			set = mfg.getNodes();
 			for (FMNode fmNode : set) {
 				System.out.print("index: "+fmNode.getIndex() +" name:"+fmNode.getElementName());
-				if(fmNode instanceof FMClusterNode){
-					System.out.println(" is cluster");
-				}else{
-					System.out.println("is not cluster");
-				}
+				System.out.println(fmNode instanceof FMClusterNode);
 			}
 			
 			

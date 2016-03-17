@@ -82,10 +82,10 @@ public class Test2 {
 			}
 			System.out.println("----------------------------");
 			
-			for(int i = 0; i < size; i++ ){
-				System.out.print(nodeSignificanceMetric.getMeasure(i)+" ");
+			Set<FMNode> set = mfg.getNodes();
+			for (FMNode fmNode : set) {
+				System.out.println("index: "+fmNode.getIndex() +" name:"+fmNode.getElementName());
 			}
-			System.out.println();
 			
 			mfg.setEdgeCorrelation(afterPretreatmentEdgeCorrelation);
 			mfg.setEdgeSignificance(afterPretreatmentEdgeSignificance);
@@ -117,8 +117,10 @@ public class Test2 {
 						FMNode target = fmEdgeImpl.getTarget();
 						if(source.equals(fmNode)){
 							if(target instanceof FMClusterNode){
+								mfg.removeClusterNode((FMClusterNode) target);
 								((FMClusterNode) target).add(fmNode);
 								mfg.removeNode(fmNode);
+								mfg.addClusterNode((FMClusterNode) target);
 							}else{
 								FMClusterNode clusterNode = new FMClusterNode(mfg, mfg.getClusterNodes().size(), "Cluster");
 								mfg.addClusterNode(clusterNode);
@@ -128,8 +130,10 @@ public class Test2 {
 							
 						}else{//target is fmNode
 							if(source instanceof FMClusterNode){
+								mfg.removeClusterNode((FMClusterNode) source);
 								((FMClusterNode) source).add(fmNode);
 								mfg.removeNode(fmNode);
+								mfg.addClusterNode((FMClusterNode) source);
 							}else{
 								FMClusterNode clusterNode = new FMClusterNode(mfg, mfg.getClusterNodes().size(), "Cluster");
 								clusterNode.add(fmNode);
@@ -250,6 +254,19 @@ public class Test2 {
 //				}
 //				System.out.println();
 //			}
+			
+			
+			set = mfg.getNodes();
+			for (FMNode fmNode : set) {
+				System.out.print("index: "+fmNode.getIndex() +" name:"+fmNode.getElementName());
+				if(fmNode instanceof FMClusterNode){
+					System.out.println(" is cluster");
+				}else{
+					System.out.println("is not cluster");
+				}
+			}
+			
+			
 		}
 
 	}

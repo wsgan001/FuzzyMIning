@@ -52,20 +52,14 @@ public class FMClusterNode extends FMNode {
 	protected String elementType;
 	protected HashSet<FMNode> primitives;
 
-	public static Color CLUSTER_BACKGROUND = FMColors.getClusterBackgroundColor();
-	public static Color CLUSTER_BORDER = FMColors.getClusterBorderColor();
-	public static Color CLUSTER_TEXT = FMColors.getClusterTextColor();
-
 	public FMClusterNode(MutableFuzzyGraph graph, int index, String label) {
 		super(graph, index, label);
 		elementName = "Cluster " + index;
 		elementType = "complete";
 		primitives = new HashSet<FMNode>();
 		getAttributeMap().put(AttributeMap.LABEL, label);
-		//getAttributeMap().put(AttributeMap.SHAPE, new Octagon(0.2));
 		getAttributeMap().put(AttributeMap.RESIZABLE, true);
 		getAttributeMap().put(AttributeMap.SIZE, new Dimension(120, 70));
-		getAttributeMap().put(AttributeMap.FILLCOLOR, CLUSTER_BACKGROUND);
 		getAttributeMap().put(AttributeMap.SHOWLABEL, true);
 	}
 

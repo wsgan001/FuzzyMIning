@@ -5,6 +5,7 @@ package org.processmining.models.graphbased.directed.fuzzymodel.metrics.simplifi
 
 import org.processmining.models.graphbased.directed.fuzzymodel.MutableFuzzyGraph;
 import org.processmining.models.graphbased.directed.fuzzymodel.metrics.binary.BinaryMetric;
+import org.processmining.models.graphbased.directed.fuzzymodel.metrics.unary.UnaryMetric;
 
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix2D;
@@ -14,6 +15,7 @@ import cern.colt.matrix.DoubleMatrix2D;
  *TODO
  */
 public class Pretreatment {
+	private UnaryMetric nodeSignificance;
 	private BinaryMetric edgeSignificance;
 	private BinaryMetric edgeCorrelation;
 	private BinaryMetric afterPretreatmentEdgeSignificance;
@@ -21,11 +23,12 @@ public class Pretreatment {
 	private DoubleMatrix2D rel;
 	private DoubleMatrix2D util;
 	private int size;
-	private MutableFuzzyGraph mfg;
-	public Pretreatment(BinaryMetric edgeSignificance, BinaryMetric edgeCorrelation, int size) {
+	//private MutableFuzzyGraph mfg;
+	public Pretreatment(BinaryMetric edgeSignificance, BinaryMetric edgeCorrelation, UnaryMetric nodeSignificance,int size) {
 		super();
 		this.edgeSignificance = edgeSignificance;
 		this.edgeCorrelation = edgeCorrelation;
+		this.nodeSignificance = nodeSignificance;
 		this.size = size;
 		afterPretreatmentEdgeSignificance = new BinaryMetric("", "", edgeSignificance);
 		afterPretreatmentEdgeCorrelation = new BinaryMetric("", "", edgeCorrelation);

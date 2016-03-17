@@ -31,6 +31,7 @@ import org.processmining.models.graphbased.directed.fuzzymodel.metrics.binary.Bi
 import org.processmining.models.graphbased.directed.fuzzymodel.metrics.binary.BinaryMetric;
 import org.processmining.models.graphbased.directed.fuzzymodel.metrics.simplification.Pretreatment;
 import org.processmining.models.graphbased.directed.fuzzymodel.metrics.simplification.RelationshipSignficanceMetirc;
+import org.processmining.models.graphbased.directed.fuzzymodel.metrics.unary.UnaryMetric;
 import org.processmining.models.graphbased.directed.fuzzymodel.util.FuzzyMinerLog;
 
 /**
@@ -58,9 +59,10 @@ public class Test2 {
 			MutableFuzzyGraph mfg = new MutableFuzzyGraph(mr);
 			BinaryMetric edgeSignificance = mr.getAggregateSignificanceBinaryMetric();
 			BinaryMetric edgeCorrelation = mr.getAggregateCorrelationBinaryMetric();
+			UnaryMetric nodeSignificanceMetric = mr.getAggregateUnaryMetric();
 			int size = XLogInfoFactory.createLogInfo(log).getEventClasses().size();
 			
-			Pretreatment pretreatment = new Pretreatment(edgeSignificance, edgeCorrelation, size);
+			Pretreatment pretreatment = new Pretreatment(edgeSignificance, edgeCorrelation, nodeSignificanceMetric,size);
 			pretreatment.cut(0.5, 0.2);
 			pretreatment.filterEdge(0.2, 0.3);
 			BinaryMetric afterPretreatmentEdgeCorrelation = pretreatment.getAfterPretreatmentEdgeCorrelation();
@@ -78,11 +80,19 @@ public class Test2 {
 				}
 				System.out.println();
 			}
+			System.out.println("----------------------------");
+			
+			for(int i = 0; i < size; i++ ){
+				System.out.print(nodeSignificanceMetric.getMeasure(i)+" ");
+			}
+			System.out.println();
 			
 			mfg.setEdgeCorrelation(afterPretreatmentEdgeCorrelation);
 			mfg.setEdgeSignificance(afterPretreatmentEdgeSignificance);
 			mfg.initializeGraph();
 			mfg.setEdgeImpls();
+			
+			
 			
 			Set<FMEdgeImpl> edgeImpls = mfg.getEdgeImpls();
 			double nodeCutoff =0.4;
@@ -185,7 +195,11 @@ public class Test2 {
 				
 			}
 			
-			
+			System.out.println("----------------------------");
+			nodeSignificanceMetric = mfg.getNodeSignificanceMetric();
+			for(int i = 0; i < size; i++ ){
+				System.out.print(nodeSignificanceMetric.getMeasure(i)+" ");
+			}
 			// List<BinaryLogMetric> metrics = mr.getBinaryLogMetrics();
 			// for(BinaryLogMetric metric : metrics){
 			// int size =

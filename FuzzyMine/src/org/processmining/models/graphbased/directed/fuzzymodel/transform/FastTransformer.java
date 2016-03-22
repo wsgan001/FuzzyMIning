@@ -1,33 +1,4 @@
-/*
- * Copyright (c) 2007 Christian W. Guenther (christian@deckfour.org)
- * 
- * LICENSE:
- * 
- * This code is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
- * EXEMPTION:
- * 
- * License to link and use is also granted to open source programs which are not
- * licensed under the terms of the GPL, given that they satisfy one or more of
- * the following conditions: 1) Explicit license is granted to the ProM and
- * ProMimport programs for usage, linking, and derivative work. 2) Carte blance
- * license is granted to all programs developed at Eindhoven Technical
- * University, The Netherlands, or under the umbrella of STW Technology
- * Foundation, The Netherlands. For further exemptions not covered by the above
- * conditions, please contact the author of this code.
- */
+
 package org.processmining.models.graphbased.directed.fuzzymodel.transform;
 
 import java.util.ArrayList;
@@ -41,6 +12,7 @@ import org.processmining.models.graphbased.directed.fuzzymodel.MutableFuzzyGraph
 
 public class FastTransformer extends FuzzyGraphTransformer {
 
+	/**cutoff threshold 用于找到victim*/
 	protected double threshold;
 	protected MutableFuzzyGraph graph;
 	protected ArrayList<FuzzyGraphTransformer> preTransformers;
@@ -65,7 +37,6 @@ public class FastTransformer extends FuzzyGraphTransformer {
 	}
 
 	public void transform(MutableFuzzyGraph graph) {
-		//context.log("Fast transformer started.", MessageLevel.NORMAL);
 		this.graph = graph;
 		// apply pre-transformers
 		for (FuzzyGraphTransformer pre : preTransformers) {
@@ -167,6 +138,12 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		return clusters;
 	}
 
+	/***
+	 * 将loser中的primitive点add到winner中，在graph的映射中将loser中原始点标记为winner
+	 * @param winner
+	 * @param loser
+	 * @return
+	 */
 	protected FMClusterNode mergeWith(FMClusterNode winner, FMClusterNode loser) {
 		for (FMNode node : loser.getPrimitives()) {
 			winner.add(node);
@@ -175,7 +152,12 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		graph.removeClusterNode(loser);
 		return winner;
 	}
-
+	
+	/***
+	 * 每一个cluster的前驱和后继结点中找到correlation最大的那个点，如果是cluster则merge，不是则不改变
+	 * @param subject
+	 * @return
+	 */
 	protected FMClusterNode getPreferredMergeTarget(FMClusterNode subject) {
 		FMClusterNode preTarget = null;
 		FMClusterNode postTarget = null;
@@ -228,6 +210,12 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		}
 	}
 
+	/***
+	 * cluater A,B内的每一个原始结点之间的correlation相加
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	protected double getAggregateCorrelation(FMClusterNode a, FMClusterNode b) {
 		Set<FMNode> aPrimitives = a.getPrimitives();
 		Set<FMNode> bPrimitives = b.getPrimitives();
@@ -241,6 +229,11 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		return aggregateCorrelation;
 	}
 
+	/***
+	 * have no Predecessors and Successors
+	 * @param clusters
+	 * @return
+	 */
 	protected ArrayList<FMClusterNode> removeIsolatedClusters(ArrayList<FMClusterNode> clusters) {
 		Set<FMNode> preset;
 		Set<FMNode> postset;
@@ -267,6 +260,11 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		return clusters;
 	}
 
+	/***
+	 * 单个点，就自己一个node组成的cluster
+	 * @param clusters
+	 * @return
+	 */
 	protected ArrayList<FMClusterNode> removeSingularClusters(ArrayList<FMClusterNode> clusters) {
 		int stopCounter = clusters.size();
 		FMClusterNode cluster;

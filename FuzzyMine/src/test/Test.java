@@ -79,6 +79,8 @@ public class Test {
 						+ " Significance: "+fmEdgeImpl.getSignificance()
 						+ " Correlation: "+fmEdgeImpl.getCorrelation());
 			}
+			System.out.println("----------------------------------");
+			pretreat.nodeAggregatinoAndAbstraction(1);
 		}
 	}
 

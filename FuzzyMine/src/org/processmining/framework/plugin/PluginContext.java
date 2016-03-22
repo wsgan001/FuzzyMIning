@@ -3,16 +3,8 @@ package org.processmining.framework.plugin;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import org.processmining.framework.connections.Connection;
-import org.processmining.framework.plugin.events.Logger;
-import org.processmining.framework.plugin.events.Logger.MessageLevel;
-import org.processmining.framework.plugin.events.PluginLifeCycleEventListener;
-import org.processmining.framework.plugin.events.ProgressEventListener;
-import org.processmining.framework.plugin.impl.FieldNotSetException;
-import org.processmining.framework.plugin.impl.FieldSetException;
-import org.processmining.framework.util.Pair;
 
-public interface PluginContext extends GlobalContext, ObjectConstructor {
+public interface PluginContext  {
 
 	/**
 	 * Returns a new plugin context instance, which can be used to invoke other
@@ -36,23 +28,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 * 
 	 * @return the list of registered progress listeners
 	 */
-	ProgressEventListener.ListenerList getProgressEventListeners();
-
-	/**
-	 * Returns the list of registered plugin life cycle listeners.
-	 * 
-	 * @return the list of registered plugin life cycle listeners.
-	 */
-	PluginLifeCycleEventListener.List getPluginLifeCycleEventListeners();
-
-	/**
-	 * Each PluginContext should carry an ID. This ID is unique within this
-	 * plugin context's global context.
-	 * 
-	 * @return the ID of this context
-	 */
-	PluginContextID getID();
-
+	
 	/**
 	 * Returns the label of this context.
 	 * 
@@ -60,16 +36,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 */
 	String getLabel();
 
-	/**
-	 * Return the plugin descriptor and method index of the plugin which is
-	 * invoked in this context. This descriptor is set by the
-	 * PluginDescriptor.invoke() method and will not be set yet before
-	 * PluginManager.invoke() is called.
-	 * 
-	 * @return the descriptor of the plugin which is invoked in this context If
-	 *         the plugin is not set yet, a pair of (null,-1) is returned
-	 */
-	Pair<PluginDescriptor, Integer> getPluginDescriptor();
+	
 
 	/**
 	 * Returns the context which created this context or null if it has no
@@ -87,28 +54,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 */
 	List<PluginContext> getChildContexts();
 
-	/**
-	 * This method returns the PluginExecutionResult of the plugin which is
-	 * invoked in this context. This future result is set by
-	 * PluginManager.invoke() and will not be available (will be null) until the
-	 * invoke() method is called.
-	 * 
-	 * @return The PluginExecutionResult that represents the result of this
-	 *         plugin invocation
-	 * @throws FieldNotSetException
-	 *             If the future is not know to this context
-	 */
-	PluginExecutionResult getResult();
-
-	/**
-	 * This method should only be used by a plugin, in the body of that plugin.
-	 * That is the only location, where it is guaranteed that each result object
-	 * in getResults() can safely be cast to a ProMFuture.
-	 * 
-	 * @param i
-	 * @return
-	 */
-	ProMFuture<?> getFutureResult(int i);
+	
 
 	/**
 	 * Returns an executor which can be used to execute plugins in child
@@ -128,30 +74,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 */
 	boolean isDistantChildOf(PluginContext context);
 
-	/*
-	 * === Setters: should only be called by the framework!
-	 * ===============================
-	 */
-
-	void setFuture(PluginExecutionResult resultToBe);
-
-	void setPluginDescriptor(PluginDescriptor descriptor, int methodIndex) throws FieldSetException,
-			RecursiveCallException;
-
-	boolean hasPluginDescriptorInPath(PluginDescriptor descriptor, int methodIndex);
-
-	/**
-	 * The provided String is provided to the context for information. It can
-	 * for example signal a state change of a plugin. Note that some contexts
-	 * can completely ignore this message.
-	 * 
-	 * @param message
-	 *            the message to log
-	 * @param level
-	 *            the message level
-	 */
-	void log(String message, MessageLevel level);
-
+	
 	/**
 	 * Same as calling log(message, MessageLevel.NORMAL);
 	 * 
@@ -170,12 +93,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 */
 	void log(Throwable exception);
 
-	/**
-	 * Returns the list of logging listeners registered to this context.
-	 * 
-	 * @return
-	 */
-	Logger.ListenerList getLoggingListeners();
+	
 
 	/**
 	 * Returns the root plugin context. This is an instance of PluginContext of
@@ -202,7 +120,7 @@ public interface PluginContext extends GlobalContext, ObjectConstructor {
 	 * 
 	 * @param c
 	 */
-	<T extends Connection> T addConnection(T c);
+	
 
 	void clear();
 }

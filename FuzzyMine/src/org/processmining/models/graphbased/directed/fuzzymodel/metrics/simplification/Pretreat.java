@@ -24,9 +24,14 @@ import cern.colt.matrix.DoubleMatrix2D;
 public class Pretreat {
 	private MutableFuzzyGraph mfg;
 	private Set<FMEdgeImpl> fmEdges;
-	private Set<FMNode> nodes;
+	//private Set<FMNode> nodes;
 	private List<FMClusterNode> clusterNodes;
 	private int size;
+	
+	protected FMNode[] nodeAliasMap;
+	protected double[][] actBinarySignificance;
+	protected double[][] actBinaryCorrelation;
+	
 	public Pretreat(MutableFuzzyGraph mfg) {
 		super();
 		this.mfg = mfg;
@@ -34,8 +39,11 @@ public class Pretreat {
 		mfg.initializeGraph();
 		mfg.setEdgeImpls();
 		this.fmEdges = mfg.getFMEdges();
-		this.nodes = mfg.getNodes();
+		//this.nodes = mfg.getNodes();
 		this.clusterNodes = mfg.getClusterNodes();
+		this.nodeAliasMap = mfg.getNodeAliasMap();
+		this.actBinaryCorrelation = mfg.getActBinarySignificance();
+		this.actBinarySignificance = mfg.getActBinarySignificance();
 	}
 	
 	public void conflictResolve(double preserveThreshold, double radioThreshold){
@@ -147,5 +155,58 @@ public class Pretreat {
 		
 	}
 	
-	
+	public void nodeAggregatinoAndAbstraction(double nodeCutoff){
+		Set<FMNode> nodes = mfg.getNodes();
+		//System.out.println(nodes.size());
+		//Aggregate And Abstract FMNode
+		for (FMNode fmNode : nodes) {
+			if(fmNode.getSignificance() >= nodeCutoff){
+				continue;
+			}
+			double max = Double.MIN_VALUE;
+			FMEdgeImpl targetEdge = null;
+			Collection<FMEdge<? extends FMNode,? extends FMNode>> inEdges = mfg.getInEdges(fmNode);
+			for (FMEdge<? extends FMNode, ? extends FMNode> fmEdge : inEdges) {
+				double correlation = fmEdge.getCorrelation();
+				if(correlation > max){
+					max = correlation;
+					targetEdge = (FMEdgeImpl) fmEdge;
+				}
+				
+			}
+			Collection<FMEdge<? extends FMNode,? extends FMNode>> outEdges = mfg.getOutEdges(fmNode);
+//			System.out.println(fmNode.getElementName() 
+//					+ " number of inEdges:" + inEdges.size()
+//					+ " number of outEdges:" + outEdges.size());
+			for (FMEdge<? extends FMNode, ? extends FMNode> fmEdge : outEdges) {
+				double correlation = fmEdge.getCorrelation();
+				if(correlation > max){
+					max = correlation;
+					targetEdge = (FMEdgeImpl) fmEdge;
+				}
+			}
+			if(targetEdge != null){
+				FMNode source = targetEdge.getSource();
+				FMNode target = targetEdge.getTarget();
+				if(source.equals(fmNode)){
+					if(target instanceof FMClusterNode){
+						int index = fmNode.getIndex();
+						((FMClusterNode) target).add(fmNode);
+						nodeAliasMap[index] = target;
+					}else{
+						
+					}
+				}else{
+					if(source instanceof FMClusterNode){
+						
+					}else{
+						
+					}
+				}
+			}
+		
+		
+		}
+		////Aggregate And Abstract FMClusterNode
+	}
 }

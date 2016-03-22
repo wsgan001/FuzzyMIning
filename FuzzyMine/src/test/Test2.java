@@ -43,7 +43,6 @@ public class Test2 {
 	@Test
 	public void test() throws Exception {
 		File file = new File("doc/L1.xes");
-		System.out.println(file == null);
 		List<XLog> logs = null;
 		for (XParser parser : XParserRegistry.instance().getAvailable()) {
 			if (parser.canParse(file)) {
@@ -131,8 +130,8 @@ public class Test2 {
 								mfg.addClusterNode((FMClusterNode) target);
 								System.out.println("1: "+target.getElementName()+" is cluster added"+fmNode.getElementName());
 							}else{
-								FMClusterNode clusterNode = new FMClusterNode(mfg, mfg.getClusterNodes().size(), "Cluster");
-								clusterNode.setIndex(fmNode.getIndex());
+								FMClusterNode clusterNode = new FMClusterNode(mfg, fmNode.getIndex(), "Cluster");
+								//clusterNode.setIndex(fmNode.getIndex());
 								clusterNode.setElementName(fmNode.getElementName());
 								mfg.addClusterNode(clusterNode);
 								mfg.removeNode(fmNode);

@@ -1047,4 +1047,17 @@ public class MutableFuzzyGraph extends AbstractDirectedGraph<FMNode, FMEdge<? ex
 		return mapping;
 	}
 
+	public double[][] getActBinarySignificance() {
+		return actBinarySignificance;
+	}
+
+	public FMNode[] getNodeAliasMap() {
+		return nodeAliasMap;
+	}
+
+	public double[][] getActBinaryRespectiveSignificance() {
+		return actBinaryRespectiveSignificance;
+	}
+
+	
 }

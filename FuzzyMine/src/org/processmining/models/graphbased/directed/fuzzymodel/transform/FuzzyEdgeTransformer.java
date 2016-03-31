@@ -77,6 +77,10 @@ public class FuzzyEdgeTransformer extends FuzzyGraphTransformer {
 		return interpretPercentageAbsolute;
 	}
 
+	/***
+	 * 值越大 ，倾向于保留重要性高的边 
+	 * @param ratio
+	 */
 	public void setSignificanceCorrelationRatio(double ratio) {
 		if ((ratio >= 0.0) && (ratio <= 1.0)) {
 			sigCorRatio = ratio;
@@ -86,6 +90,10 @@ public class FuzzyEdgeTransformer extends FuzzyGraphTransformer {
 		}
 	}
 
+	/***
+	 * 设置比例 比例越大保留的边越多
+	 * @param percentage
+	 */
 	public void setPreservePercentage(double percentage) {
 		if ((percentage > 0.0) && (percentage <= 1.0)) {
 			preservePercentage = percentage;

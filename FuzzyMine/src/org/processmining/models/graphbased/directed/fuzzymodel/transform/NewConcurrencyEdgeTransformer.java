@@ -18,10 +18,18 @@ public class NewConcurrencyEdgeTransformer extends FuzzyGraphTransformer {
 		this.ratioThreshold = 0.7;
 	}
 
+	/***
+	 * 设置保护阈值
+	 * @param threshold
+	 */
 	public void setPreserveThreshold(double threshold) {
 		preserveThreshold = threshold;
 	}
 
+	/**
+	 * 设置比例阈值，如果两条边的权重相差不大则两者比例过大大于阈值会认为是并发的两个事件
+	 * @param threshold
+	 */
 	public void setRatioThreshold(double threshold) {
 		ratioThreshold = threshold;
 	}

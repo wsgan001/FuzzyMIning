@@ -19,6 +19,7 @@ public class FastTransformer extends FuzzyGraphTransformer {
 	protected ArrayList<FuzzyGraphTransformer> interimTransformers;
 	protected ArrayList<FuzzyGraphTransformer> postTransformers;
 
+	ArrayList<FMClusterNode> clusters;
 	public FastTransformer(PluginContext context) {
 		super(context, "Fast transformer");
 		threshold = 1.0;
@@ -39,12 +40,13 @@ public class FastTransformer extends FuzzyGraphTransformer {
 	public void transform(MutableFuzzyGraph graph) {
 		this.graph = graph;
 		// apply pre-transformers
+		//解决边冲突
 		for (FuzzyGraphTransformer pre : preTransformers) {
 			//context.log("  * Applying pre-flight graph transformer '" + pre.getName() + "'.", MessageLevel.NORMAL);
 			pre.transform(graph);
 		}
 		// perform initial clustering
-		ArrayList<FMClusterNode> clusters = cluster();
+		clusters = cluster();
 		// apply interim-transformers
 		for (FuzzyGraphTransformer interim : interimTransformers) {
 			//context.log("  * Applying in-flight graph transformer '" + interim.getName() + "'.", MessageLevel.NORMAL);
@@ -69,6 +71,10 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		//context.log("Fast transformer completed.", MessageLevel.NORMAL);
 	}
 
+	/***
+	 * 得到一元重要性小于阈值的牺牲集合
+	 * @return
+	 */
 	protected ArrayList<FMNode> getSimplificationVictims() {
 		ArrayList<FMNode> victims = new ArrayList<FMNode>();
 		FMNode probe;
@@ -282,6 +288,10 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		return clusters;
 	}
 
+	/***
+	 * 计算单个聚类的前后连接
+	 * @param cluster
+	 */
 	protected void eliminateSingularClusterPreservingLinks(FMClusterNode cluster) {
 		FMNode singularNode = cluster.getPrimitives().toArray(new FMNode[1])[0];
 		int ownIndex = singularNode.getIndex();
@@ -346,6 +356,11 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		return winner;
 	}
 
+	/***
+	 * 得到相关性最高的邻居结点
+	 * @param node
+	 * @return
+	 */
 	protected FMNode getMostCorrelatedNeighbor(FMNode node) {
 		int refIndex = node.getIndex();
 		double maxCorrelation = 0.0;
@@ -413,4 +428,8 @@ public class FastTransformer extends FuzzyGraphTransformer {
 		postTransformers.clear();
 	}
 
+	public ArrayList<FMClusterNode> getClusters() {
+		return clusters;
+	}
+	
 }
